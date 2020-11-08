@@ -1,8 +1,8 @@
 module Main where
 
-import Types
-import Streamly
+import           Streamly
 import qualified Streamly.Prelude as S
+import           Types
 
 -- main :: IO ()
 -- main = putStrLn "Hello, Haskell!"

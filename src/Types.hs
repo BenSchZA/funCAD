@@ -20,7 +20,7 @@ data Config = Config { runs :: Int }
 -- run config simulation = Configs runs
 
 -- createModel :: States -> Params -> Structure -> Model
--- createModel states params structure = 
+-- createModel states params structure =
 
 data SimulationResults = SimulationResults { result :: [Int] }
 -- type Simulation = Model -> SimulationResults
