@@ -1,0 +1,14 @@
+cradle:
+  multi:
+    - path: src/Main.hs
+      config:
+        cradle:
+          cabal:
+            component: lib:lib-cadcad-hs
+
+    # Not supported by ghcide yet.
+    - path: src/Main.hs
+      config:
+        cradle:
+          cabal:
+            component: exe:cadcad-hs

@@ -1,7 +1,7 @@
-module Types (Config) where
+module Types (Config, Policy) where
 
 type PolicyFunction = Int -> Int
-data Policy = Policy { signal :: String, p_function :: PolicyFunction }
+data Policy = Policy { signal :: String, function :: PolicyFunction }
 
 data State = State { key :: String, value :: Int }
 type StateUpdate = State  -> State
