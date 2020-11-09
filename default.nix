@@ -1,6 +1,6 @@
 { mkDerivation, base, stdenv }:
 mkDerivation {
-  pname = "cadcad-hs";
+  pname = "funcad";
   version = "0.1.0.0";
   src = ./.;
   isLibrary = true;

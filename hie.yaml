@@ -4,11 +4,11 @@ cradle:
       config:
         cradle:
           cabal:
-            component: lib:lib-cadcad-hs
+            component: lib:lib-funcad
 
     # Not supported by ghcide yet.
     - path: src/Main.hs
       config:
         cradle:
           cabal:
-            component: exe:cadcad-hs
+            component: exe:funcad

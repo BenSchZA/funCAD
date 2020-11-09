@@ -1,4 +1,4 @@
-# Revision history for cadcad-hs
+# Revision history for funcad
 
 ## 0.1.0.0 -- YYYY-mm-dd
 
