@@ -30,7 +30,7 @@ simulation :: State -> SF () State
 simulation state = arr (\_ -> state) >>> model
 ```
 
-## Tools
+# Tools
 
 * [Arrows](https://en.wikibooks.org/wiki/Haskell/Understanding_arrows)
 * [Yampa](https://wiki.haskell.org/Yampa)
