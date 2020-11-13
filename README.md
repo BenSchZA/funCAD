@@ -1,6 +1,8 @@
 # funCAD
 Functional [cadCAD](https://github.com/cadCAD-org/cadCAD)
 
+This is still a WIP and doesn't do much. For the purpose of learning about Haskell, category theory, generalized dynamical systems modelling and simulation, in the context of cadCAD.
+
 ```haskell
 data State = State {
     _timestep :: Int,
@@ -16,18 +18,27 @@ initialState = State 0 1
 stateHistory :: [State]
 stateHistory = [initialState]
 
-updateTimestep :: State -> State
-updateTimestep state = set timestep ((view timestep state) + 1) state
+updateTimestep :: SF State State
+updateTimestep =
+    increment &&& id
+    ^>> merge
+    where
+        increment = (+ 1) . (view timestep)
+        merge = arr (uncurry (set timestep))
 
-u1 :: State -> State
-u1 state = set value ((view value state) + 1) state
+u1 :: SF State State
+u1 =
+    update &&& id
+    ^>> merge
+    where
+        update = (+ 1) . (view value)
+        merge = arr (uncurry (set value))
 
 model :: SF State State
-model = arr updateTimestep
-        >>^ u1
+model = u1
 
-simulation :: State -> SF () State
-simulation state = arr (\_ -> state) >>> model
+simulation :: SF State State
+simulation = updateTimestep >>> model
 ```
 
 # Tools

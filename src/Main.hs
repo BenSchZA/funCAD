@@ -16,6 +16,7 @@ import           Data.Map.Strict        (Map)
 import           Flow
 import           Numeric.Natural
 
+
 data State = State {
     _timestep :: Int,
     _value    :: Float
@@ -30,18 +31,27 @@ initialState = State 0 1
 stateHistory :: [State]
 stateHistory = [initialState]
 
-updateTimestep :: State -> State
-updateTimestep state = set timestep ((view timestep state) + 1) state
+updateTimestep :: SF State State
+updateTimestep =
+    increment &&& id
+    ^>> merge
+    where
+        increment = (+ 1) . (view timestep)
+        merge = arr (uncurry (set timestep))
 
-u1 :: State -> State
-u1 state = set value ((view value state) + 1) state
+u1 :: SF State State
+u1 =
+    update &&& id
+    ^>> merge
+    where
+        update = (+ 1) . (view value)
+        merge = arr (uncurry (set value))
 
 model :: SF State State
-model = arr updateTimestep
-        >>^ u1
+model = u1
 
-simulation :: State -> SF () State
-simulation state = arr (\_ -> state) >>> model
+simulation :: SF State State
+simulation = updateTimestep >>> model
 
 run :: IO a                                 -- init
            -> (Bool -> IO (DTime, Maybe a)) -- input/sense
@@ -53,10 +63,10 @@ run a b c d = reactimate a b c d
 timestepDelay :: IO ()
 timestepDelay = threadDelay 100000
 
-initialize :: IO ()
-initialize = putStrLn "funCAD starting up..." >> threadDelay 1000000
+initialize :: IO State
+initialize = putStrLn "funCAD starting up..." >> threadDelay 1000000 >> return initialState
 
-input :: IORef UTCTime -> Bool -> IO (Double, Maybe ())
+input :: IORef UTCTime -> Bool -> IO (Double, Maybe State)
 input timeRef _ = do
     now      <- getCurrentTime
     lastTime <- readIORef timeRef
@@ -64,18 +74,20 @@ input timeRef _ = do
     -- let dt = now `diffUTCTime` lastTime
     let dt = 0.1
     timestepDelay
-    return (realToFrac dt, Just ()) -- return (dt, Nothing)
+    return (realToFrac dt, Nothing)
 
+actuate :: p -> State -> IO Bool
 actuate = (\_ b -> (putStrLn $ show b) >> return False)
 
 main :: IO ()
 main = do
     t <- getCurrentTime
     timeRef <- newIORef t
-    run initialize (input timeRef) actuate (simulation $ initialState)
+    result <- run initialize (input timeRef) actuate simulation
+    print result
 
--- timesteps = [0.1..10]
+-- timesteps = [0.1..10000]
 
 -- main :: IO ()
 -- main = do
---     mapM_ print (embed (simulation $ initialState) ((), [(dt, Nothing) | dt <- timesteps]))
+--     mapM_ print (embed (simulation) (initialState, [(dt, Nothing) | dt <- timesteps]))
